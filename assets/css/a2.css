@@ -1,0 +1,32 @@
+/* start page */
+div#start_page{
+	border:1px solid black;
+	width: 500px;
+	height: 500px;
+	text-align: center;
+	position: relative;
+}
+
+div#start_page h1{
+	position: absolute;
+	left: 25%;
+	font-size: 40px;
+	border: 2px dashed black;
+	padding: 10px;
+}
+
+div#start_page p{
+	position: absolute;
+	top:20%;
+	left: 35%;
+	font-size: 30px;
+	border: 2px dashed black;
+	padding: 10px;
+}
+
+button#start_button{
+	position: absolute;
+	bottom:25%;
+	left: 38%;
+	font-size: 40px;
+}
