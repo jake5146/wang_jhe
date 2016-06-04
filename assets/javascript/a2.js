@@ -144,6 +144,8 @@ function borderCheck(x,y){
 }
 
 //animation
+var raf;
+var running = true;
 function animate(){
 	ctx.clearRect(0,0,1000,640);
 	drawFramework();
@@ -152,7 +154,30 @@ function animate(){
 	spaceship.y += speedY;
 	borderCheck(spaceship.x,spaceship.y);
 	spaceship.draw();
-	setTimeout(animate,33);
+	raf = window.requestAnimationFrame(animate);
 }
+
+//if pause is clicked
+canvas.addEventListener("click",function(e){
+	if(e.clientX > 650 && e.clientX < 750 && e.clientY > 10 && e.clientY < 40 && running == true){
+		//stop animation
+		window.cancelAnimationFrame(raf);
+		//stop counting time
+		clearInterval(t);
+		//clear running
+		running = false;
+		//interval between two clicks
+		sleep(50);
+	}
+	if(e.clientX > 650 && e.clientX < 750 && e.clientY > 10 && e.clientY < 40 && running == false){	
+		raf = window.requestAnimationFrame(animate);
+		t = setInterval(function(){seconds--;},1000);
+		running = true;
+		//interval between two clicks
+		sleep(50);
+
+	}
+});
+
 
 animate();
