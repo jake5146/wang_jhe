@@ -11,12 +11,12 @@ $(document).ready(function(){
 		});
 });
 
+
 //draw canvas framework
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var score = 200;
 var seconds = 60;
-drawFramework();
 
 function drawFramework(){
 	//draw menu line
@@ -46,6 +46,10 @@ function drawFramework(){
 	ctx.font = "17px sans-serif";
 	ctx.fillText("PAUSE",672,32);
 }
+//set timer
+var t = setInterval(function(){
+	seconds--;
+},1000);
 
 //spaceship 50px*50px
 var spaceship = {
@@ -115,7 +119,17 @@ var spaceship = {
 	}
 };
 
-spaceship.setCoordinate(100,100);
-spaceship.draw();
+//random assortment of 10 objects
+spaceship.setCoordinate(50,50);
 
+//animation
+function animate(){
+	ctx.clearRect(0,0,1000,640);
+	drawFramework();
+	spaceship.x += 10;
+	spaceship.y += 10;
+	spaceship.draw();
+	setTimeout(animate,33);
+}
 
+animate();
