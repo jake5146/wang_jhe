@@ -120,14 +120,29 @@ var spaceship = {
 };
 
 //random assortment of 10 objects
-spaceship.setCoordinate(50,50);
+var x = Math.floor(Math.random()*900+50);
+var y = Math.floor(Math.random()*540+50);
+spaceship.setCoordinate(x,y);
+//random direction
+var speed = 2;
+var angle = Math.floor(Math.random()*2*Math.PI);
+var speedX;
+var speedY;
+polarToRect(speed,angle);
+function polarToRect(speed,angle){
+	speedX = Math.cos(angle);
+	speedY = Math.sin(angle);
+}
+//border check
+
 
 //animation
 function animate(){
 	ctx.clearRect(0,0,1000,640);
 	drawFramework();
-	spaceship.x += 10;
-	spaceship.y += 10;
+	spaceship.x += speedX;
+	spaceship.y += speedY;
+
 	spaceship.draw();
 	setTimeout(animate,33);
 }
