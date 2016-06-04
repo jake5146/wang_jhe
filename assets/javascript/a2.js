@@ -124,25 +124,33 @@ var x = Math.floor(Math.random()*900+50);
 var y = Math.floor(Math.random()*540+50);
 spaceship.setCoordinate(x,y);
 //random direction
-var speed = 2;
+var speed = 8;
 var angle = Math.floor(Math.random()*2*Math.PI);
 var speedX;
 var speedY;
 polarToRect(speed,angle);
 function polarToRect(speed,angle){
-	speedX = Math.cos(angle);
-	speedY = Math.sin(angle);
+	speedX = speed*Math.cos(angle);
+	speedY = speed*Math.sin(angle);
 }
 //border check
-
+function borderCheck(x,y){
+	if(x <= 25 || x >= 975){
+		speedX = -speedX;
+	}
+	if(y <= 75 || y >= 615){
+		speedY = -speedY;
+	}
+}
 
 //animation
 function animate(){
 	ctx.clearRect(0,0,1000,640);
 	drawFramework();
+	//add speed
 	spaceship.x += speedX;
 	spaceship.y += speedY;
-
+	borderCheck(spaceship.x,spaceship.y);
 	spaceship.draw();
 	setTimeout(animate,33);
 }
