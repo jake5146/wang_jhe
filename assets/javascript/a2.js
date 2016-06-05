@@ -15,6 +15,8 @@ $(document).ready(function(){
 	$("canvas").hide();
 	$("#fin_page").hide();
 	$("#game_page").hide();
+	$("svg").hide();
+	
 	$("#start_button").click(
 		function(){
 			//hide start page when button is clicked
@@ -148,6 +150,8 @@ var angle = Math.floor(Math.random()*2*Math.PI);
 var speedX;
 var speedY;
 polarToRect(speed,angle);
+
+
 function polarToRect(speed,angle){
 	speedX = speed*Math.cos(angle);
 	speedY = speed*Math.sin(angle);
@@ -167,6 +171,29 @@ function borderCheck(x,y){
 //animation
 var raf;
 var running = true;
+
+function animate(){
+	ctx.clearRect(0,0,1000,640);
+	drawFramework();
+	drawPauseButton();
+	//add speed
+	spaceship.x += speedX;
+	spaceship.y += speedY;
+	borderCheck(spaceship.x,spaceship.y);
+	spaceship.draw();
+	raf = window.requestAnimationFrame(animate);
+	//game page shows up when seconds or score is 0.
+	if (seconds <= 0 || score <= 0) {
+		if (level == 1) {
+			clearInterval(t);
+			timeUp();
+		} else if (level == 2) {
+			clearInterval(t);
+			finishGame();
+		}
+	}
+}
+
 
 function drawFramework(){
 	//draw menu line
@@ -206,27 +233,7 @@ function drawPauseButton() {
 	}
 }
 
-function animate(){
-	ctx.clearRect(0,0,1000,640);
-	drawFramework();
-	drawPauseButton();
-	//add speed
-	spaceship.x += speedX;
-	spaceship.y += speedY;
-	borderCheck(spaceship.x,spaceship.y);
-	spaceship.draw();
-	raf = window.requestAnimationFrame(animate);
-	//game page shows up when seconds or score is 0.
-	if (seconds <= 0 || score <= 0) {
-		if (level == 1) {
-			clearInterval(t);
-			timeUp();
-		} else if (level == 2) {
-			clearInterval(t);
-			finishGame();
-		}
-	}
-}
+
 
 //if pause is clicked
 canvas.addEventListener("click",function(e){
