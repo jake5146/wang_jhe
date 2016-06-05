@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
 	//hide the canvas at the beginning
 	$("canvas").hide();
@@ -175,9 +174,7 @@ canvas.addEventListener("click",function(e){
 		running = true;
 		//interval between two clicks
 		sleep(50);
-
 	}
 });
-
 
 animate();
