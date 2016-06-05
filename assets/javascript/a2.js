@@ -4,13 +4,20 @@ var t;
 //Current game level (initial value=1)
 var level = 1;
 
+/*Set local storage to keep track of users' scores.
+ * key: score_L_1, item: list of scores from Level 1.
+ * key: score_L_2, item: list of scores from Level 2*/
+localStorage.setItem("score_L_1", []);
+localStorage.setItem("score_L_2", []);
+
+
 $(document).ready(function(){
 	//hide the all pages except for start page at the beginning
 	
 	//@@get rid after finish: code on purpose of testing
 	//$("#start_page").hide();
 	//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	
+
 	
 	$("canvas").hide();
 	$("#fin_page").hide();
@@ -28,6 +35,8 @@ $(document).ready(function(){
 		});
 });
 
+
+
 //Show game_page after level 1.
 function timeUp() {
 	$("canvas").fadeTo(10, 0.05);
@@ -37,7 +46,7 @@ function timeUp() {
 //Move to next level(leve2) when "next" button is pressed.
 $("#next_button").click(
 	function() {
-		seconds = 1;
+		seconds = 10;
 		score = 200;
 		level++;
 		$("canvas").fadeTo("fast", 1.0);
@@ -55,7 +64,7 @@ function finishGame() {
 //Go back to start_page when "finish" button is pressed.
 $("#fin_button").click(
 	function() {
-		seconds = 1;
+		seconds = 10;
 		score = 200;
 		level--;
 		$("#fin_page").hide();
@@ -70,7 +79,7 @@ $("#fin_button").click(
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var score = 200;
-var seconds = 1;
+var seconds = 10;
 
 //spaceship 50px*50px
 var spaceship = {
@@ -163,10 +172,12 @@ function borderCheck(x,y){
 	if(x <= 25 || x >= 975){
 		speedX = -speedX;
 	}
-	if(y <= 50 || y >= 615){
+	if(y <= 50 || y >= 585){
 		speedY = -speedY;
 	}
 }
+
+
 
 //animation
 var raf;
@@ -181,10 +192,15 @@ function animate(){
 	spaceship.y += speedY;
 	borderCheck(spaceship.x,spaceship.y);
 	spaceship.draw();
+
+	//draw_BH();
+	
 	raf = window.requestAnimationFrame(animate);
 	//game page shows up when seconds or score is 0.
 	if (seconds <= 0 || score <= 0) {
 		if (level == 1) {
+			
+			
 			clearInterval(t);
 			timeUp();
 		} else if (level == 2) {
