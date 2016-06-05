@@ -31,6 +31,44 @@ button#start_button{
 	font-size: 40px;
 }
 
+/* game page */
+div#game_page, div#fin_page{
+	border:1px solid black;
+	width: 500px;
+	height: 500px;
+	text-align: center;
+	position: absolute;
+	z-index:1;
+}
+
+div#game_page h1, div#fin_page h1{
+	position: absolute;
+	left: 34%;
+	font-size: 40px;
+	border: 2px dashed black;
+	padding: 10px;
+}
+
+div#game_page p, div#fin_page p{
+	position: absolute;
+	top:20%;
+	left: 40%;
+	font-size: 30px;
+	border: 2px dashed black;
+	padding: 10px;
+}
+
+button#next_button, button#fin_button{
+	position: absolute;
+	bottom:25%;
+	left: 38%;
+	font-size: 40px;
+}
+
+button#fin_button {
+	left: 35%;
+}
+
 /* canvas */
 canvas{
 	border: 1px solid black;
