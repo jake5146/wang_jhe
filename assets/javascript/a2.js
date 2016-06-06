@@ -1,7 +1,11 @@
 $(document).ready(function(){
 	//hide the all pages except for start page at the beginning
+	//@@get rid after finish: code on purpose of testing
 	$("canvas").hide();
-	$("#info_page").hide();	
+	$("#fin_page").hide();
+	$("#game_page").hide();
+	$("svg").hide();
+	
 	$("#start_button").click(
 		function(){
 			//hide start page when button is clicked
@@ -26,8 +30,8 @@ var level = 1;
 /*Set local storage to keep track of users' scores.
  * key: scoreL1, item: list of scores from Level 1.
  * key: scoreL2, item: list of scores from Level 2*/
-//localStorage.setItem("scoreL1", []);
-//localStorage.setItem("scoreL2", []);
+localStorage.setItem("scoreL1", []);
+localStorage.setItem("scoreL2", []);
 
 //spaceship 50px*50px
 var spaceship = {
@@ -127,6 +131,7 @@ function borderCheck(x,y){
 var blackhole = document.getElementById("blackhole");
 var bluehole = document.getElementById("bluehole");
 var purplehole = document.getElementById("purplehole");
+blackhole.style.width = 50;
 
 //animation
 var raf;
@@ -142,33 +147,32 @@ function animate(){
 	borderCheck(spaceship.x,spaceship.y);
 	spaceship.draw();
 
- 	ctx.drawImage(blackhole,200,200,50,50);
+	//draw_BH();
+	ctx.drawImage(blackhole,200,200,50,50);
 	ctx.drawImage(bluehole,400,400,50,50);
 	ctx.drawImage(purplehole,300,300,50,50);
 
 	//game page shows up when seconds or # of objects is 0.
-	if (seconds <= 0 || objectsNum == 0) {
+	if (seconds == 0 || objectsNum == 0) {
 		//if time is up and at least 1 object remains
-		if (objectsNum != 0) {
+		if (seconds == 0 && objectsNum != 0) {
 			//(level1) move to next level
 			if(level == 1){
 				clearInterval(t);
 				//Show game_page after level 1.
 				$("canvas").hide();
-				$("#info_page").show(nextCallback());
+				$("#game_page").show(nextCallback());
 			//(level2) finish game
 			}else if(level == 2){
 				clearInterval(t);
 				//Show finish_page after level 2.
 				$("canvas").hide();
-				ctx.fillText('2',50,50);
-				$("#info_page").show(finishCallback());
+				$("#fin_page").show(finishCallback());
 			}
 		//if no object remains, just finish game
 		}else if(objectsNum == 0){
 				$("canvas").hide();
-				ctx.fillText(level,50,50);
-				$("#info_page").show(finishCallback());
+				$("#fin_page").show(finishCallback());
 		}
 	}
 
@@ -245,7 +249,6 @@ animate();
 
 //Move to next level(leve2) when "next" button is pressed.
 function nextCallback(){
-	document.getElementById("info_level").innerHTML = "Level#1";
 	$("#next_button").click(
 		function() {
 			seconds = 5;
@@ -253,7 +256,7 @@ function nextCallback(){
 			objectsNum = 10;
 			level = 2;
 			$("canvas").fadeTo("fast", 1.0);
-			$("#info_page").hide();
+			$("#game_page").hide();
 		}
 	);
 	t = setInterval(function(){seconds--;},1000);
@@ -261,15 +264,14 @@ function nextCallback(){
 
 //Go back to start_page when "finish" button is pressed.
 function finishCallback(){
-	document.getElementById("info_level").innerHTML = "Level#2";
-	document.getElementById("next_button").innerHTML = "FINISH";
-	$("#next_button").click(
+	$("#fin_button").click(
 		function() {
 			seconds = 5;
 			score = 200;
 			level = 1;
 			objectsNum = 10;
-			$("#info_page").hide();
+			$("#fin_page").hide();
+			$("canvas").fadeTo("fast", 1.0);
 			$("canvas").hide();
 			$("#start_page").show();
 		}

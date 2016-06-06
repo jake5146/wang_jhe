@@ -31,8 +31,8 @@ button#start_button{
 	font-size: 40px;
 }
 
-/* info page */
-div#info_page{
+/* game page */
+div#game_page, div#fin_page{
 	border:1px solid black;
 	width: 500px;
 	height: 500px;
@@ -41,7 +41,7 @@ div#info_page{
 	z-index:1;
 }
 
-div#info_page h1{
+div#game_page h1, div#fin_page h1{
 	position: absolute;
 	left: 34%;
 	font-size: 40px;
@@ -49,7 +49,7 @@ div#info_page h1{
 	padding: 10px;
 }
 
-div#info_page p{
+div#game_page p, div#fin_page p{
 	position: absolute;
 	top:20%;
 	left: 40%;
@@ -58,13 +58,16 @@ div#info_page p{
 	padding: 10px;
 }
 
-button#next_button{
+button#next_button, button#fin_button{
 	position: absolute;
 	bottom:25%;
 	left: 38%;
 	font-size: 40px;
 }
 
+button#fin_button {
+	left: 35%;
+}
 
 /* canvas */
 canvas{
