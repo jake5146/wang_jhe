@@ -14,6 +14,7 @@ $(document).ready(function(){
 			$("canvas").show();
 			//set timer when game starts.
 			t = setInterval(function(){seconds--;},1000);
+			interval = setInterval(createHole,1000);
 		});
 });
 
@@ -128,10 +129,72 @@ function borderCheck(x,y){
 	}
 }
 
+//hole properties
 var blackhole = document.getElementById("blackhole");
 var bluehole = document.getElementById("bluehole");
 var purplehole = document.getElementById("purplehole");
-blackhole.style.width = 50;
+//update interval 3s
+var holeInterval = 2;
+//disappears after eating # of obj
+var BLACKDIS = 1;
+var PURPLEDIS = 2;
+var BLUEDIS = 3;
+//points if clicked
+var BLACKP = 20;
+var PURPLEP = 10;
+var BLUEP = 5;
+//pull speed
+var BLUEPS = 'slow';
+var PURPLEPS = 'medium';
+var BLACK = 'fast';
+//define hole object
+function hole(x,y,type){
+	this.x = x;
+	this.y = y;
+	this.type = type; //1 for bluehole 2 for purplehole 3 for blackhole
+	objEat = 0; 
+}
+//draw hole on canvas
+function drawHole(holeObject){
+	if(holeObject.type == 1){
+		ctx.drawImage(bluehole,holeObject.x,holeObject.y,50,50);
+	}else if(holeObject.type == 2){
+		ctx.drawImage(purplehole,holeObject.x,holeObject.y,50,50);
+	}else{
+		ctx.drawImage(blackhole,holeObject.x,holeObject.y,50,50);
+	}
+}
+
+//hole array
+var holeArr = [];
+//random create holes every HOLEINTERVAL
+var interval;
+function createHole(){
+	var ram = Math.random();
+	var ramX = Math.floor(Math.random()*900+50);
+	var ramY = Math.floor(Math.random()*590+50);
+
+	//check overlap
+
+	if(ram <= 0.15){
+		//0<ram<=0.15 (0.15)
+		holeArr.push(new hole(ramX,ramY,1));
+	}else if(ram <= 0.45 && ram > 0.15){
+		//0.15<ram<=0.45 (0.3)
+		holeArr.push(new hole(ramX,ramY,2));
+	}else if(ram > 0.45 && ram <= 1){
+		//0.45<ram<=1 (0.55)
+		holeArr.push(new hole(ramX,ramY,3));
+	}
+}
+
+function drawHoleArr(){
+	for(var i = 0;i < holeArr.length;i++){
+		drawHole(holeArr[i]);
+	}
+}
+
+
 
 //animation
 var raf;
@@ -147,10 +210,8 @@ function animate(){
 	borderCheck(spaceship.x,spaceship.y);
 	spaceship.draw();
 
-	//draw_BH();
-	ctx.drawImage(blackhole,200,200,50,50);
-	ctx.drawImage(bluehole,400,400,50,50);
-	ctx.drawImage(purplehole,300,300,50,50);
+	//create blackhole
+	drawHoleArr();
 
 	//game page shows up when seconds or # of objects is 0.
 	if (seconds == 0 || objectsNum == 0) {
