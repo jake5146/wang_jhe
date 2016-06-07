@@ -14,7 +14,7 @@ $(document).ready(function(){
 			$("canvas").show();
 			//set timer when game starts.
 			t = setInterval(function(){seconds--;},1000);
-			interval = setInterval(createHole,1000);
+			interval = setInterval(createHole,createHoleInterval);
 		});
 });
 
@@ -23,7 +23,7 @@ var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var score = 200;
 var objectsNum = 10;
-var seconds = 5;
+var seconds = 60;
 //timer variable
 var t;
 //Current game level (initial value=1)
@@ -38,6 +38,8 @@ localStorage.setItem("scoreL2", []);
 var spaceship = {
 	x:0,
 	y:0,
+	vx:0,
+	vy:0,
 	setCoordinate:function(x,y){
 		this.x = x;
 		this.y = y;
@@ -107,25 +109,22 @@ var x = Math.floor(Math.random()*900+50);
 var y = Math.floor(Math.random()*540+50);
 spaceship.setCoordinate(x,y);
 //random direction
-var speed = 8;
+var speed = 5;
 var angle = Math.floor(Math.random()*2*Math.PI);
-var speedX;
-var speedY;
 polarToRect(speed,angle);
 
-
 function polarToRect(speed,angle){
-	speedX = speed*Math.cos(angle);
-	speedY = speed*Math.sin(angle);
+	spaceship.vx = speed*Math.cos(angle);
+	spaceship.vy = speed*Math.sin(angle);
 }
 
 //border check
 function borderCheck(x,y){
-	if(x <= 25 || x >= 975){
-		speedX = -speedX;
+	if(x + spaceship.vx <= 25 || x + spaceship.vx>= 975){
+		spaceship.vx = -spaceship.vx;
 	}
-	if(y <= 50 || y >= 585){
-		speedY = -speedY;
+	if(y + spaceship.vy <= 50 || y + spaceship.vy >= 585){
+		spaceship.vy = -spaceship.vy;
 	}
 }
 
@@ -133,8 +132,6 @@ function borderCheck(x,y){
 var blackhole = document.getElementById("blackhole");
 var bluehole = document.getElementById("bluehole");
 var purplehole = document.getElementById("purplehole");
-//update interval 3s
-var holeInterval = 2;
 //disappears after eating # of obj
 var BLACKDIS = 1;
 var PURPLEDIS = 2;
@@ -169,23 +166,58 @@ function drawHole(holeObject){
 var holeArr = [];
 //random create holes every HOLEINTERVAL
 var interval;
+var createHoleInterval = 1000;
 function createHole(){
 	var ram = Math.random();
-	var ramX = Math.floor(Math.random()*900+50);
-	var ramY = Math.floor(Math.random()*590+50);
-
-	//check overlap
-
+	var ramX;
+	var ramY;
+	
 	if(ram <= 0.15){
-		//0<ram<=0.15 (0.15)
-		holeArr.push(new hole(ramX,ramY,1));
-	}else if(ram <= 0.45 && ram > 0.15){
-		//0.15<ram<=0.45 (0.3)
-		holeArr.push(new hole(ramX,ramY,2));
-	}else if(ram > 0.45 && ram <= 1){
-		//0.45<ram<=1 (0.55)
+		ramX = Math.floor(Math.random()*900+50);
+	    ramY = Math.floor(Math.random()*540+50);
+	    //check overlap
+	    while(!checkOverlap(ramX,ramY)){
+	    	ramX = Math.floor(Math.random()*900+50);
+	    	ramY = Math.floor(Math.random()*540+50);
+	    }
 		holeArr.push(new hole(ramX,ramY,3));
 	}
+
+	ram = Math.random();
+
+	if(ram <= 0.3){
+		ramX = Math.floor(Math.random()*900+50);
+	    ramY = Math.floor(Math.random()*540+50);
+	    //check overlap
+	    while(!checkOverlap(ramX,ramY)){
+	    	ramX = Math.floor(Math.random()*900+50);
+	    	ramY = Math.floor(Math.random()*540+50);
+	    }
+		holeArr.push(new hole(ramX,ramY,2));
+	}
+
+	ram = Math.random();
+
+	if(ram <= 0.5){
+		ramX = Math.floor(Math.random()*900+50);
+	    ramY = Math.floor(Math.random()*540+50);
+	    //check overlap
+	    while(!checkOverlap(ramX,ramY)){
+	    	ramX = Math.floor(Math.random()*900+50);
+	    	ramY = Math.floor(Math.random()*540+50);
+	    }
+		holeArr.push(new hole(ramX,ramY,1));
+	}
+}
+
+function checkOverlap(ramX,ramY){
+	for(var i = 0;i < holeArr.length;i++){
+		if(ramX >= holeArr[i].x-100 && ramX <= holeArr[i].x+100 
+			&& ramY <= holeArr[i].y+100 && ramY >= holeArr[i].y-100){
+			return false;
+		}
+	}
+	return true;
 }
 
 function drawHoleArr(){
@@ -193,8 +225,40 @@ function drawHoleArr(){
 		drawHole(holeArr[i]);
 	}
 }
-
-
+var dx;
+var dy;
+function pullObject(){
+	//check list of objects!!
+	//here just use one object as example!!
+	for(var i = 0;i < holeArr.length;i++){
+		if(spaceship.x <= holeArr[i].x+75 && spaceship.x >= holeArr[i].x-75 
+			&& spaceship.y <= holeArr[i].y+75 && spaceship.y >= holeArr[i].y-75){
+			//inside the event horizon
+			dx = holeArr[i].x - spaceship.x + 25;
+			dy = holeArr[i].y - spaceship.y;
+			spaceship.vx = 0;
+			spaceship.vy = 0;
+			if(dx > 0){
+				spaceship.x++;
+			}
+			if(dx < 0){
+				spaceship.x--;
+			}
+			if(dy > 0){
+				spaceship.y++;
+			}
+			if(dy < 0){
+				spaceship.y--;
+			}
+			if(dx<=1 && dy<=1){
+				//disappear
+				spaceship = 0;
+				holeArr[i].objEat++;
+				//check # of obj eaten
+			}
+		}
+	}
+}
 
 //animation
 var raf;
@@ -205,16 +269,22 @@ function animate(){
 	drawFramework();
 	drawPauseButton();
 	//add speed
-	spaceship.x += speedX;
-	spaceship.y += speedY;
+	spaceship.x += spaceship.vx;
+	spaceship.y += spaceship.vy;
 	borderCheck(spaceship.x,spaceship.y);
-	spaceship.draw();
+	
+	if(spaceship != 0){
+		spaceship.draw();
+	}
 
 	//create blackhole
 	drawHoleArr();
+	pullObject();
 
 	//game page shows up when seconds or # of objects is 0.
 	if (seconds == 0 || objectsNum == 0) {
+		holeArr.length = 0;
+		clearInterval(interval);
 		//if time is up and at least 1 object remains
 		if (seconds == 0 && objectsNum != 0) {
 			//(level1) move to next level
@@ -312,7 +382,7 @@ animate();
 function nextCallback(){
 	$("#next_button").click(
 		function() {
-			seconds = 5;
+			seconds = 60;
 			score = 200;
 			objectsNum = 10;
 			level = 2;
@@ -321,13 +391,14 @@ function nextCallback(){
 		}
 	);
 	t = setInterval(function(){seconds--;},1000);
+	interval = setInterval(createHole,createHoleInterval);
 }
 
 //Go back to start_page when "finish" button is pressed.
 function finishCallback(){
 	$("#fin_button").click(
 		function() {
-			seconds = 5;
+			seconds = 60;
 			score = 200;
 			level = 1;
 			objectsNum = 10;
