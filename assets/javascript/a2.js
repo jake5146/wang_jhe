@@ -2,41 +2,39 @@
  *  Callback function: line 329
  *  Objects defined: line 358 
  *   */
- 
+
 $(document).ready(function(){
 	//hide the all pages except for start page at the beginning
 	//@@get rid after finish: code on purpose of testing
 	$("canvas").hide();
 	$("#game_page").hide();
-	
+	showTopScores();
 	$("#start_button").click(
 		function(){
 			//hide start page when button is clicked
 			$("#start_page").hide();
 			//show canvas
 			$("canvas").show();
+			write = false;
 			//set timer when game starts.
 			t = setInterval(decrementCounter,1000);
 		});
 });
+
 
 //draw canvas framework
 var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var score = 200;
 var objectsNum = 10;
-var seconds = 60;
+var seconds = 1;
 //timer variable
 var t;
 //Current game level (initial value=1)
 var level = 1;
-/*Set local storage to keep track of users' scores.
- * key: scoreL1, item: list of scores from Level 1.
- * key: scoreL2, item: list of scores from Level 2*/
-localStorage.setItem("scoreL1", [0,0,0]);
-localStorage.setItem("scoreL2", [0,0,0]);
-var list_L1 = localStorage.getItem("score_L1");
-var list_L2 = localStorage.getItem("score_L2");
+//scorelist used to store and retreive user's scores
+
+//localStorage.setItem("scorelist",JSON.stringify(scorelist));
 
 /* Objects --> */
 
@@ -879,18 +877,7 @@ function reassortment(blackhole) {
 var blackhole = document.getElementById("blackhole");
 var bluehole = document.getElementById("bluehole");
 var purplehole = document.getElementById("purplehole");
-//disappears after eating # of obj
-var BLACKDIS = 1;
-var PURPLEDIS = 2;
-var BLUEDIS = 3;
-//points if clicked
-var BLACKP = 20;
-var PURPLEP = 10;
-var BLUEP = 5;
-//pull speed
-var BLUEPS = 'slow';
-var PURPLEPS = 'medium';
-var BLACK = 'fast';
+
 //define hole object
 function hole(x,y,type){
 	this.x = x;
@@ -1007,23 +994,23 @@ function pullObject(){
 	for(var i = 0; i < len; i++){
 		for (var obj = 0; obj < obj_arr.length; obj++) {
 
+			//inside the event horizon
+			dx = holeArr[i].x - obj_arr[obj].x + 25;
+			dy = holeArr[i].y - obj_arr[obj].y;
+			
 			if ((holeArr[i] != 0 && obj_arr[obj] != 0) && 
 				(obj_arr[obj].x <= holeArr[i].x+75 && 
 				obj_arr[obj].x >= holeArr[i].x-75 && 
 				obj_arr[obj].y <= holeArr[i].y+75 && 
 				obj_arr[obj].y >= holeArr[i].y-75)) {
-
-				//inside the event horizon
-				dx = holeArr[i].x - obj_arr[obj].x + 25;
-				dy = holeArr[i].y - obj_arr[obj].y;
-
+				
 				obj_arr[obj].vx = 0;
 				obj_arr[obj].vy = 0;
 
 				//fast pull speed
 				if(holeArr[i].type == 3){
 					if(dx > 0){
-					obj_arr[obj].x++;
+						obj_arr[obj].x++;
 					}
 					if(dx < 0){
 						obj_arr[obj].x--;
@@ -1295,6 +1282,38 @@ canvas.addEventListener("click",function(e){
 	//<-- blackhole //
 });
 
+
+ //show top three scores
+function showTopScores(){
+	scorelist = JSON.parse(localStorage.getItem("scorelist"));
+	//sort
+	for(var i = 0; i < scorelist.length; i++){
+		for(var j = i; j < scorelist.length;j++){
+			if(scorelist[j] >= scorelist[i]){
+				var temp = scorelist[i];
+				scorelist[i] = scorelist[j];
+				scorelist[j] = temp;
+			}
+		}
+	}
+	
+	var topScores = document.getElementById("high_score");
+	topScores.innerHTML = scorelist.length;
+	
+	if(scorelist.length == 1){
+		topScores.innerHTML = "<br>" + scorelist[0];
+	}else if(scorelist.length == 2){
+		topScores.innerHTML = "<br>" + scorelist[0] + "<br>" + scorelist[1];
+	}else if(scorelist.length >= 3){
+		topScores.innerHTML = "<br>" + scorelist[0] + "<br>" + scorelist[1] + "<br>" + scorelist[2];
+	}if(scorelist.length == 0){
+		topScores.innerHTML = "<br>" + "No Records";
+	}
+	
+}
+
+var scorelist = [];
+
 /* Callback functions --> */
 
 //Move to next level(level2) when "next" button is pressed.
@@ -1302,8 +1321,7 @@ function nextCallback(){
 	$("#next_button").click(
 		function() {
 			createHoleInterval = 4;
-			seconds = 60;
-			score = 200;
+			seconds = 1;
 			objectsNum = 10;
 			level = 2;
 			$("canvas").show();
@@ -1314,18 +1332,28 @@ function nextCallback(){
 	t = setInterval(decrementCounter,1000);
 }
 
+var write = false;
 //Go back to start_page when "finish" button is pressed.
 function finishCallback(){
 	$("#next_button").click(
 		function() {
 			createHoleInterval = 4;
-			seconds = 60;
-			score = 200;
-			level = 1;
+			seconds = 1;
+			//save current score into local storage
+			if(write == false){
+				scorelist = JSON.parse(localStorage.getItem("scorelist"));
+				scorelist.push(score);
+				write = true;
+				localStorage.setItem("scorelist",JSON.stringify(scorelist));
+			}
+			if(level == 2){
+				score = 200;
+				level = 1;
+			}
 			objectsNum = 10;
-			
 			$("#game_page").hide();
 			$("canvas").hide();
+			showTopScores();
 			$("#start_page").show();
 		}
 	);
