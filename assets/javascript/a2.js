@@ -25,7 +25,7 @@ var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var score = 200;
 var objectsNum = 10;
-var seconds = 20;
+var seconds = 60;
 //timer variable
 var t;
 //Current game level (initial value=1)
@@ -836,7 +836,7 @@ function assortment(object) {
 		object.setCoordinate(x,y);
 	}
 	//random direction
-	speed = 5;
+	speed = 3;
 	angle = Math.floor(Math.random()*2*Math.PI);
 	
 	//Convert polar coord. to rect. coord.,
@@ -913,13 +913,29 @@ function drawHole(holeObject){
 var holeArr = [];
 //random create holes every HOLEINTERVAL
 var interval;
-var createHoleInterval = 5;
+var createHoleInterval = 4;
+//frequency of appearance of blackhole
+var frequecyBlack;
+var frequecyPurple;
+var frequecyBlue;
+
 function createHole(){
 	var ram = Math.random();
 	var ramX;
 	var ramY;
-	
-	if(ram <= 0.15){
+
+	//check current level
+	if(level == 1){
+		frequecyBlack = 0.15;
+		frequecyPurple = 0.3;
+		frequecyBlue = 0.4;
+	}else if(level == 2){
+		frequecyBlack = 0.3;
+		frequecyPurple = 0.6;
+		frequecyBlue = 0.8;
+	}
+
+	if(ram <= frequecyBlack){
 		ramX = Math.floor(Math.random()*900+50);
 	    ramY = Math.floor(Math.random()*540+50);
 	    //check overlap
@@ -932,7 +948,7 @@ function createHole(){
 
 	ram = Math.random();
 
-	if(ram <= 0.3){
+	if(ram <= frequecyPurple){
 		ramX = Math.floor(Math.random()*900+50);
 	    ramY = Math.floor(Math.random()*540+50);
 	    //check overlap
@@ -945,7 +961,7 @@ function createHole(){
 
 	ram = Math.random();
 
-	if(ram <= 0.5){
+	if(ram <= frequecyBlue){
 		ramX = Math.floor(Math.random()*900+50);
 	    ramY = Math.floor(Math.random()*540+50);
 	    //check overlap
@@ -960,7 +976,7 @@ function createHole(){
 function createHoleEveryInterval() {
 	if (createHoleInterval == 0) {
 		createHole();
-		createHoleInterval = 5;
+		createHoleInterval = 4;
 	}
 }
 
@@ -990,28 +1006,64 @@ function pullObject(){
 	var len = holeArr.length;
 	for(var i = 0; i < len; i++){
 		for (var obj = 0; obj < obj_arr.length; obj++) {
+
 			if ((holeArr[i] != 0 && obj_arr[obj] != 0) && 
 				(obj_arr[obj].x <= holeArr[i].x+75 && 
 				obj_arr[obj].x >= holeArr[i].x-75 && 
 				obj_arr[obj].y <= holeArr[i].y+75 && 
 				obj_arr[obj].y >= holeArr[i].y-75)) {
+
 				//inside the event horizon
 				dx = holeArr[i].x - obj_arr[obj].x + 25;
 				dy = holeArr[i].y - obj_arr[obj].y;
+
 				obj_arr[obj].vx = 0;
 				obj_arr[obj].vy = 0;
-				if(dx > 0){
+
+				//fast pull speed
+				if(holeArr[i].type == 3){
+					if(dx > 0){
 					obj_arr[obj].x++;
+					}
+					if(dx < 0){
+						obj_arr[obj].x--;
+					}
+					if(dy > 0){
+						obj_arr[obj].y++;
+					}
+					if(dy < 0){
+						obj_arr[obj].y--;
+					}
+					//medium pull speed
+				}else if(holeArr[i].type == 2){
+					if(dx > 0){
+						obj_arr[obj].x += 0.5;
+					}
+					if(dx < 0){
+						obj_arr[obj].x -= 0.5;
+					}
+					if(dy > 0){
+						obj_arr[obj].y += 0.5;
+					}
+					if(dy < 0){
+						obj_arr[obj].y -= 0.5;
+					}
+					//slow pull speed
+				}else if(holeArr[i].type == 1){
+					if(dx > 0){
+						obj_arr[obj].x += 0.2;
+					}
+					if(dx < 0){
+						obj_arr[obj].x -= 0.2;
+					}
+					if(dy > 0){
+						obj_arr[obj].y += 0.2;
+					}
+					if(dy < 0){
+						obj_arr[obj].y -= 0.2;
+					}
 				}
-				if(dx < 0){
-					obj_arr[obj].x--;
-				}
-				if(dy > 0){
-					obj_arr[obj].y++;
-				}
-				if(dy < 0){
-					obj_arr[obj].y--;
-				}
+				
 				if(dx<=1 && dy<=1){
 					//Decrement objectsNum (current # of objects) by 1.
 					objectsNum--;
@@ -1124,7 +1176,7 @@ function animate(){
 		}else if(objectsNum == 0){
 			id_button.setAttribute("style", "left:35%");
 			id_level.innerText = level;
-			id_score.innerText = 0;
+			id_score.innerText = score;
 			id_button_name.innerText = "FINISH";
 			
 			$("canvas").hide();
@@ -1243,17 +1295,14 @@ canvas.addEventListener("click",function(e){
 	//<-- blackhole //
 });
 
-
-
-
 /* Callback functions --> */
 
 //Move to next level(level2) when "next" button is pressed.
 function nextCallback(){
 	$("#next_button").click(
 		function() {
-			createHoleInterval = 5;
-			seconds = 20;
+			createHoleInterval = 4;
+			seconds = 60;
 			score = 200;
 			objectsNum = 10;
 			level = 2;
@@ -1269,8 +1318,8 @@ function nextCallback(){
 function finishCallback(){
 	$("#next_button").click(
 		function() {
-			createHoleInterval = 5;
-			seconds = 20;
+			createHoleInterval = 4;
+			seconds = 60;
 			score = 200;
 			level = 1;
 			objectsNum = 10;
@@ -1283,10 +1332,4 @@ function finishCallback(){
 }
 
 /* <-- Callback functions */
-
 animate();
-
-
-
-
-
