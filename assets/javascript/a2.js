@@ -1313,6 +1313,7 @@ function showTopScores(){
 }
 
 var scorelist = [];
+localStorage.setItem("scorelist",JSON.stringify(scorelist));
 
 /* Callback functions --> */
 
