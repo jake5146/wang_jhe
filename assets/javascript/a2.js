@@ -6,6 +6,7 @@
 $(document).ready(function(){
 	//hide the all pages except for start page at the beginning
 	//@@get rid after finish: code on purpose of testing
+	
 	$("canvas").hide();
 	$("#game_page").hide();
 	showTopScores();
@@ -860,8 +861,8 @@ function reassortment(blackhole) {
 		if ((obj_arr[obj] != 0) &&
 			(obj_arr[obj].x <= blackhole.x+75 && 
 			obj_arr[obj].x >= blackhole.x-75 && 
-			obj_arr[obj].y <= blackhole.y+75 && 
-			obj_arr[obj].y >= blackhole.y-75)) {
+			obj_arr[obj].y <= blackhole.y+50 && 
+			obj_arr[obj].y >= blackhole.y-100)) {
 			
 			assortment(obj_arr[obj]);
 		}
@@ -888,11 +889,11 @@ function hole(x,y,type){
 //draw hole on canvas
 function drawHole(holeObject){
 	if(holeObject.type == 1){
-		ctx.drawImage(bluehole,holeObject.x,holeObject.y,50,50);
+		ctx.drawImage(bluehole,holeObject.x-25,holeObject.y-25,50,50);
 	}else if(holeObject.type == 2){
-		ctx.drawImage(purplehole,holeObject.x,holeObject.y,50,50);
+		ctx.drawImage(purplehole,holeObject.x-25,holeObject.y-25,50,50);
 	}else{
-		ctx.drawImage(blackhole,holeObject.x,holeObject.y,50,50);
+		ctx.drawImage(blackhole,holeObject.x-25,holeObject.y-25,50,50);
 	}
 }
 
@@ -913,22 +914,22 @@ function createHole(){
 
 	//check current level
 	if(level == 1){
-		frequecyBlack = 0.15;
-		frequecyPurple = 0.3;
-		frequecyBlue = 0.4;
+		frequecyBlack = 0.2;
+		frequecyPurple = 0.35;
+		frequecyBlue = 0.5;
 	}else if(level == 2){
-		frequecyBlack = 0.3;
-		frequecyPurple = 0.6;
-		frequecyBlue = 0.8;
+		frequecyBlack = 0.4;
+		frequecyPurple = 0.7;
+		frequecyBlue = 1;
 	}
 
 	if(ram <= frequecyBlack){
 		ramX = Math.floor(Math.random()*900+50);
-	    ramY = Math.floor(Math.random()*540+50);
+	    ramY = Math.floor(Math.random()*515+75);
 	    //check overlap
 	    while(!checkOverlap(ramX,ramY)){
 	    	ramX = Math.floor(Math.random()*900+50);
-	    	ramY = Math.floor(Math.random()*540+50);
+	    	ramY = Math.floor(Math.random()*515+75);
 	    }
 		holeArr.push(new hole(ramX,ramY,3));
 	}
@@ -937,11 +938,11 @@ function createHole(){
 
 	if(ram <= frequecyPurple){
 		ramX = Math.floor(Math.random()*900+50);
-	    ramY = Math.floor(Math.random()*540+50);
+	    ramY = Math.floor(Math.random()*515+75);
 	    //check overlap
 	    while(!checkOverlap(ramX,ramY)){
 	    	ramX = Math.floor(Math.random()*900+50);
-	    	ramY = Math.floor(Math.random()*540+50);
+	    	ramY = Math.floor(Math.random()*515+75);
 	    }
 		holeArr.push(new hole(ramX,ramY,2));
 	}
@@ -950,11 +951,11 @@ function createHole(){
 
 	if(ram <= frequecyBlue){
 		ramX = Math.floor(Math.random()*900+50);
-	    ramY = Math.floor(Math.random()*540+50);
+	    ramY = Math.floor(Math.random()*515+75);
 	    //check overlap
 	    while(!checkOverlap(ramX,ramY)){
 	    	ramX = Math.floor(Math.random()*900+50);
-	    	ramY = Math.floor(Math.random()*540+50);
+	    	ramY = Math.floor(Math.random()*515+75);
 	    }
 		holeArr.push(new hole(ramX,ramY,1));
 	}
@@ -995,14 +996,14 @@ function pullObject(){
 		for (var obj = 0; obj < obj_arr.length; obj++) {
 
 			//inside the event horizon
-			dx = holeArr[i].x - obj_arr[obj].x + 25;
-			dy = holeArr[i].y - obj_arr[obj].y;
+			dx = holeArr[i].x - obj_arr[obj].x;
+			dy = holeArr[i].y - obj_arr[obj].y-25;
 			
 			if ((holeArr[i] != 0 && obj_arr[obj] != 0) && 
 				(obj_arr[obj].x <= holeArr[i].x+75 && 
 				obj_arr[obj].x >= holeArr[i].x-75 && 
-				obj_arr[obj].y <= holeArr[i].y+75 && 
-				obj_arr[obj].y >= holeArr[i].y-75)) {
+				obj_arr[obj].y <= holeArr[i].y+50 && 
+				obj_arr[obj].y >= holeArr[i].y-100)) {
 				
 				obj_arr[obj].vx = 0;
 				obj_arr[obj].vy = 0;
@@ -1285,7 +1286,11 @@ canvas.addEventListener("click",function(e){
 
  //show top three scores
 function showTopScores(){
-	scorelist = JSON.parse(localStorage.getItem("scorelist"));
+	try{
+		scorelist = JSON.parse(localStorage.getItem("scorelist"));
+	}catch(e){
+		localStorage.setItem("scorelist",JSON.stringify([]));
+	}
 	//sort
 	for(var i = 0; i < scorelist.length; i++){
 		for(var j = i; j < scorelist.length;j++){
@@ -1307,13 +1312,12 @@ function showTopScores(){
 	}else if(scorelist.length >= 3){
 		topScores.innerHTML = "<br>" + scorelist[0] + "<br>" + scorelist[1] + "<br>" + scorelist[2];
 	}if(scorelist.length == 0){
-		topScores.innerHTML = "<br>" + "No Records";
+		topScores.innerHTML = "<br>" + "0";
 	}
 	
 }
 
 var scorelist = [];
-localStorage.setItem("scorelist",JSON.stringify(scorelist));
 
 /* Callback functions --> */
 
@@ -1342,10 +1346,14 @@ function finishCallback(){
 			seconds = 60;
 			//save current score into local storage
 			if(write == false){
-				scorelist = JSON.parse(localStorage.getItem("scorelist"));
-				scorelist.push(score);
-				write = true;
-				localStorage.setItem("scorelist",JSON.stringify(scorelist));
+				try{
+					scorelist = JSON.parse(localStorage.getItem("scorelist"));
+					scorelist.push(score);
+					write = true;
+					localStorage.setItem("scorelist",JSON.stringify(scorelist));
+				}catch(e){
+					localStorage.setItem("scorelist",JSON.stringify([]));
+				}
 			}
 			if(level == 2){
 				score = 200;
