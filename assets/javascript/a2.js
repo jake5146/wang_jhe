@@ -27,7 +27,7 @@ var canvas = document.getElementById("game");
 var ctx = canvas.getContext("2d");
 var score = 200;
 var objectsNum = 10;
-var seconds = 1;
+var seconds = 60;
 //timer variable
 var t;
 //Current game level (initial value=1)
@@ -1051,7 +1051,7 @@ function pullObject(){
 					}
 				}
 				
-				if(dx<=1 && dy<=1){
+				if(Math.abs(dx)<=1 && Math.abs(dy)<=1){
 					//Decrement objectsNum (current # of objects) by 1.
 					objectsNum--;
 					//disappear
@@ -1321,7 +1321,7 @@ function nextCallback(){
 	$("#next_button").click(
 		function() {
 			createHoleInterval = 4;
-			seconds = 1;
+			seconds = 60;
 			objectsNum = 10;
 			level = 2;
 			$("canvas").show();
@@ -1338,7 +1338,7 @@ function finishCallback(){
 	$("#next_button").click(
 		function() {
 			createHoleInterval = 4;
-			seconds = 1;
+			seconds = 60;
 			//save current score into local storage
 			if(write == false){
 				scorelist = JSON.parse(localStorage.getItem("scorelist"));
