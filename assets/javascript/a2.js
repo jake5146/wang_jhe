@@ -123,32 +123,54 @@ var moon = {
 		this.y = y;
 	},
 	draw:function(){
-		//moon outer circle.
+		// //moon outer circle.
+		// ctx.save();
+		// ctx.translate(this.x,this.y);
+		// //draw outer arc of moon
+		// ctx.beginPath();
+		// var grd = ctx.createLinearGradient(0,0,0,60);
+	    // grd.addColorStop(0,"#FFFF66");
+	    // grd.addColorStop(1,"gray");
+		// ctx.fillStyle = grd;
+		// ctx.strokeStyle = "black";
+		// ctx.arc(0,25,20,Math.PI/8,Math.PI*15/8,0);	
+		// ctx.fill();
+		// ctx.stroke();
+		// //draw stroke of inner arc of moon
+		// ctx.beginPath();
+		// ctx.strokeStyle = "black";
+		// ctx.arc(8,25,13,Math.PI/4,Math.PI*7/4,0);
+		// ctx.fill();
+		// ctx.stroke();
+		
+		// //Fill inner part of moon with white.
+		// ctx.beginPath();
+		// var grd1 = ctx.createLinearGradient(0,0,0,60);
+	    // grd1.addColorStop(0,"rgba(0,0,102,0.4)");
+	    // grd1.addColorStop(1,"rgba(41,41,61,0.2)");
+		// ctx.fillStyle = grd1;
+		// ctx.strokeStyle = "rgba(41,41,61,0.2)";
+		// ctx.arc(8,25,12,0,Math.PI*2,0);
+		// ctx.fill();
+		// ctx.stroke();
+		// ctx.restore();
+		
+		
 		ctx.save();
 		ctx.translate(this.x,this.y);
-		//draw outer arc of moon
+		
 		ctx.beginPath();
-		var grd = ctx.createLinearGradient(0,0,0,60);
-	    grd.addColorStop(0,"#FFFF66");
-	    grd.addColorStop(1,"gray");
+		var grd = ctx.createLinearGradient(0,60,0,0);
+	    grd.addColorStop(0,"#ffff33");
+	    grd.addColorStop(1,"#b3b300");
 		ctx.fillStyle = grd;
-		ctx.strokeStyle = "black";
-		ctx.arc(0,25,20,Math.PI/8,Math.PI*15/8,0);	
-		ctx.fill();
+		
+		ctx.moveTo(10,8);
+		ctx.quadraticCurveTo(-30,25,10,42);
+		ctx.quadraticCurveTo(-5,25,10,8);
 		ctx.stroke();
-		//draw stroke of inner arc of moon
-		ctx.beginPath();
-		ctx.strokeStyle = "black";
-		ctx.arc(8,25,13,Math.PI/4,Math.PI*7/4,0);
 		ctx.fill();
-		ctx.stroke();
-		ctx.beginPath();
-		//Fill inner part of moon with white.
-		ctx.fillStyle = "white";
-		ctx.strokeStyle = "white";
-		ctx.arc(8,25,12,0,Math.PI*2,0);
-		ctx.fill();
-		ctx.stroke();
+		
 		ctx.restore();
 	}
 };
@@ -1198,14 +1220,17 @@ function drawPauseButton() {
 	ctx.clearRect(649, 9, 102, 32);
 	//Pause button
 	ctx.beginPath();
+	ctx.fillStyle = "#99bbff";
 	ctx.moveTo(650,10);
 	ctx.lineTo(750,10);
 	ctx.lineTo(750,40);
 	ctx.lineTo(650,40);
 	ctx.closePath();
 	ctx.stroke();
+	ctx.fill();
 	//Pause text
 	ctx.font = "17px sans-serif";
+	ctx.fillStyle = "#002266";
 	if (running == false) {
 		ctx.fillText("RESUME",665,32);
 	}
